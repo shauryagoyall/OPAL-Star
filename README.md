@@ -8,9 +8,9 @@ from envs.py remove atari_env in \
 is_atari = hasattr(gym.envs, 'atari') and isinstance( \
             env.unwrapped, gym.envs.atari.atari_env.AtariEnv) 
 
-    File "C:\Users\91845\anaconda3\lib\site-packages\stable_baselines3\common\atari_wrappers.py", line 36, in reset \
-        noops = self.unwrapped.np_random.randint(1, self.noop_max + 1) \
-    AttributeError: 'numpy.random._generator.Generator' object has no attribute 'randint' \
+    File "C:\Users\91845\anaconda3\lib\site-packages\stable_baselines3\common\atari_wrappers.py", line 36, in reset 
+        noops = self.unwrapped.np_random.randint(1, self.noop_max + 1) 
+    AttributeError: 'numpy.random._generator.Generator' object has no attribute 'randint' 
 
     #make np_random.randint(1, self.noop_max + 1) to np_random.integers(1, self.noop_max + 1)
 
@@ -19,11 +19,9 @@ is_atari = hasattr(gym.envs, 'atari') and isinstance( \
 
 This is a PyTorch implementation of
 * Advantage Actor Critic (A2C), a synchronous deterministic version of [A3C](https://arxiv.org/pdf/1602.01783v1.pdf)
-* Proximal Policy Optimization [PPO](https://arxiv.org/pdf/1707.06347.pdf)
-* Scalable trust-region method for deep reinforcement learning using Kronecker-factored approximation [ACKTR](https://arxiv.org/abs/1708.05144)
-* Generative Adversarial Imitation Learning [GAIL](https://arxiv.org/abs/1606.03476)
 
-Also see the OpenAI posts: [A2C/ACKTR](https://blog.openai.com/baselines-acktr-a2c/) and [PPO](https://blog.openai.com/openai-baselines-ppo/) for more information.
+
+Also see the OpenAI posts: [A2C/ACKTR](https://blog.openai.com/baselines-acktr-a2c/) 
 
 This implementation is inspired by the OpenAI baselines for [A2C](https://github.com/openai/baselines/tree/master/baselines/a2c), [ACKTR](https://github.com/openai/baselines/tree/master/baselines/acktr) and [PPO](https://github.com/openai/baselines/tree/master/baselines/ppo1). It uses the same hyper parameters and the model since they were well tuned for Atari games.
 
