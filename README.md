@@ -1,5 +1,9 @@
 # A2C
 
+## To run:
+
+    python main.py --env-name "ALE/Breakout-v5" --num-processes 1
+    
 File "C:\Users\xxxx\anaconda3\lib\site-packages\stable_baselines3\common\atari_wrappers.py", line 36, in reset \
     noops = self.unwrapped.np_random.randint(1, self.noop_max + 1) \
 AttributeError: 'numpy.random._generator.Generator' object has no attribute 'randint'\
@@ -14,9 +18,7 @@ is_atari = hasattr(gym.envs, 'atari') and isinstance( \
 
     #make np_random.randint(1, self.noop_max + 1) to np_random.integers(1, self.noop_max + 1)
 
-## To run:
 
-    python main.py --env-name "ALE/Breakout-v5" --num-processes 1
 
 ## Please use hyper parameters from this readme. With other hyper parameters things might not work (it's RL after all)!
 
@@ -24,20 +26,12 @@ This is a PyTorch implementation of
 * Advantage Actor Critic (A2C), a synchronous deterministic version of [A3C](https://arxiv.org/pdf/1602.01783v1.pdf)
 
 
+
+
+
+############################
+
 Also see the OpenAI posts: [A2C/ACKTR](https://blog.openai.com/baselines-acktr-a2c/) 
-
-This implementation is inspired by the OpenAI baselines for [A2C](https://github.com/openai/baselines/tree/master/baselines/a2c), [ACKTR](https://github.com/openai/baselines/tree/master/baselines/acktr) and [PPO](https://github.com/openai/baselines/tree/master/baselines/ppo1). It uses the same hyper parameters and the model since they were well tuned for Atari games.
-
-Please use this bibtex if you want to cite this repository in your publications:
-
-    @misc{pytorchrl,
-      author = {Kostrikov, Ilya},
-      title = {PyTorch Implementations of Reinforcement Learning Algorithms},
-      year = {2018},
-      publisher = {GitHub},
-      journal = {GitHub repository},
-      howpublished = {\url{https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail}},
-    }
 
 ## Supported (and tested) environments (via [OpenAI Gym](https://gym.openai.com))
 * [Atari Learning Environment](https://github.com/mgbellemare/Arcade-Learning-Environment)
