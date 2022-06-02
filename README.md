@@ -14,7 +14,6 @@ File "C:\Users\91845\anaconda3\lib\site-packages\stable_baselines3\common\atari_
 AttributeError: 'numpy.random._generator.Generator' object has no attribute 'randint' \
 
 #make np_random.randint(1, self.noop_max + 1) to np_random.integers(1, self.noop_max + 1)
-
  `
 
 
