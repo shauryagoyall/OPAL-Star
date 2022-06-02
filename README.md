@@ -1,8 +1,10 @@
 # pytorch-a2c-ppo-acktr
 
-## Update (April 12th, 2021)
+File "C:\Users\xxxx\anaconda3\lib\site-packages\stable_baselines3\common\atari_wrappers.py", line 36, in reset
+    noops = self.unwrapped.np_random.randint(1, self.noop_max + 1)
+AttributeError: 'numpy.random._generator.Generator' object has no attribute 'randint'
 
-PPO is great, but [Soft Actor Critic](https://arxiv.org/abs/1812.05905) can be better for many continuous control tasks. Please check out [my new RL](http://github.com/ikostrikov/jax-rl) repository in jax.
+
 
 ## Please use hyper parameters from this readme. With other hyper parameters things might not work (it's RL after all)!
 
