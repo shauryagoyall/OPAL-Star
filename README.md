@@ -1,4 +1,4 @@
-# pytorch-a2c-ppo-acktr
+# A2C
 
 File "C:\Users\xxxx\anaconda3\lib\site-packages\stable_baselines3\common\atari_wrappers.py", line 36, in reset \
     noops = self.unwrapped.np_random.randint(1, self.noop_max + 1) \
@@ -14,6 +14,9 @@ is_atari = hasattr(gym.envs, 'atari') and isinstance( \
 
     #make np_random.randint(1, self.noop_max + 1) to np_random.integers(1, self.noop_max + 1)
 
+## To run:
+
+    python main.py --env-name "ALE/Breakout-v5" --num-processes 1
 
 ## Please use hyper parameters from this readme. With other hyper parameters things might not work (it's RL after all)!
 
