@@ -24,7 +24,7 @@ class Policy(nn.Module):
                 base = MLPBase
             else:
                 raise NotImplementedError
-
+        
         self.base = base(obs_shape[0], **base_kwargs)
 
         if action_space.__class__.__name__ == "Discrete":
@@ -208,6 +208,10 @@ class MLPBase(NNBase):
         self.actor = nn.Sequential(
             init_(nn.Linear(num_inputs, hidden_size)), nn.Tanh(),
             init_(nn.Linear(hidden_size, hidden_size)), nn.Tanh())
+        ###############################################
+        self.actor2 = nn.Sequential(
+            init_(nn.Linear(num_inputs, hidden_size)), nn.Tanh(),
+            init_(nn.Linear(hidden_size, hidden_size)), nn.Tanh())
 
         self.critic = nn.Sequential(
             init_(nn.Linear(num_inputs, hidden_size)), nn.Tanh(),
@@ -225,5 +229,7 @@ class MLPBase(NNBase):
 
         hidden_critic = self.critic(x)
         hidden_actor = self.actor(x)
+        ####################################################3
+        hidden_actor2 = self.actor2(x)
 
         return self.critic_linear(hidden_critic), hidden_actor, rnn_hxs
