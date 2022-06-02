@@ -4,9 +4,7 @@
 
     python main.py --env-name "ALE/Breakout-v5" --num-processes 1
     
-File "C:\Users\xxxx\anaconda3\lib\site-packages\stable_baselines3\common\atari_wrappers.py", line 36, in reset \
-    noops = self.unwrapped.np_random.randint(1, self.noop_max + 1) \
-AttributeError: 'numpy.random._generator.Generator' object has no attribute 'randint'\
+
 
 from envs.py remove atari_env in \
 is_atari = hasattr(gym.envs, 'atari') and isinstance( \
@@ -138,37 +136,3 @@ python enjoy.py --load-dir trained_models/a2c --env-name "PongNoFrameskip-v4"
 ```bash
 python enjoy.py --load-dir trained_models/ppo --env-name "Reacher-v2"
 ```
-
-## Results
-
-### A2C
-
-![BreakoutNoFrameskip-v4](imgs/a2c_breakout.png)
-
-![SeaquestNoFrameskip-v4](imgs/a2c_seaquest.png)
-
-![QbertNoFrameskip-v4](imgs/a2c_qbert.png)
-
-![beamriderNoFrameskip-v4](imgs/a2c_beamrider.png)
-
-### PPO
-
-
-![BreakoutNoFrameskip-v4](imgs/ppo_halfcheetah.png)
-
-![SeaquestNoFrameskip-v4](imgs/ppo_hopper.png)
-
-![QbertNoFrameskip-v4](imgs/ppo_reacher.png)
-
-![beamriderNoFrameskip-v4](imgs/ppo_walker.png)
-
-
-### ACKTR
-
-![BreakoutNoFrameskip-v4](imgs/acktr_breakout.png)
-
-![SeaquestNoFrameskip-v4](imgs/acktr_seaquest.png)
-
-![QbertNoFrameskip-v4](imgs/acktr_qbert.png)
-
-![beamriderNoFrameskip-v4](imgs/acktr_beamrider.png)
