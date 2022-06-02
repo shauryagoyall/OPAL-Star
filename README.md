@@ -22,8 +22,8 @@ sb3 package:
 
 ## To Edit:
 
-CNNBase 
-
+Major: CNNBase from model.py in a2c...   folder \
+Minor: pytorch.save(...       from main.py
 
 
 
