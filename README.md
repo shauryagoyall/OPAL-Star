@@ -20,6 +20,9 @@ sb3 package:
 
     #make np_random.randint(1, self.noop_max + 1) to np_random.integers(1, self.noop_max + 1)
 
+## To Edit:
+
+CNNBase 
 
 
 
