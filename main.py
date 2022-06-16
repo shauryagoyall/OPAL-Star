@@ -56,38 +56,38 @@ def main():
             eps=args.eps,
             alpha=args.alpha,
             max_grad_norm=args.max_grad_norm)
-    elif args.algo == 'ppo':
-        agent = algo.PPO(
-            actor_critic,
-            args.clip_param,
-            args.ppo_epoch,
-            args.num_mini_batch,
-            args.value_loss_coef,
-            args.entropy_coef,
-            lr=args.lr,
-            eps=args.eps,
-            max_grad_norm=args.max_grad_norm)
-    elif args.algo == 'acktr':
-        agent = algo.A2C_ACKTR(
-            actor_critic, args.value_loss_coef, args.entropy_coef, acktr=True)
+    # elif args.algo == 'ppo':
+    #     agent = algo.PPO(
+    #         actor_critic,
+    #         args.clip_param,
+    #         args.ppo_epoch,
+    #         args.num_mini_batch,
+    #         args.value_loss_coef,
+    #         args.entropy_coef,
+    #         lr=args.lr,
+    #         eps=args.eps,
+    #         max_grad_norm=args.max_grad_norm)
+    # elif args.algo == 'acktr':
+    #     agent = algo.A2C_ACKTR(
+    #         actor_critic, args.value_loss_coef, args.entropy_coef, acktr=True)
 
-    if args.gail:
-        assert len(envs.observation_space.shape) == 1
-        discr = gail.Discriminator(
-            envs.observation_space.shape[0] + envs.action_space.shape[0], 100,
-            device)
-        file_name = os.path.join(
-            args.gail_experts_dir, "trajs_{}.pt".format(
-                args.env_name.split('-')[0].lower()))
+    # if args.gail:
+    #     assert len(envs.observation_space.shape) == 1
+    #     discr = gail.Discriminator(
+    #         envs.observation_space.shape[0] + envs.action_space.shape[0], 100,
+    #         device)
+    #     file_name = os.path.join(
+    #         args.gail_experts_dir, "trajs_{}.pt".format(
+    #             args.env_name.split('-')[0].lower()))
         
-        expert_dataset = gail.ExpertDataset(
-            file_name, num_trajectories=4, subsample_frequency=20)
-        drop_last = len(expert_dataset) > args.gail_batch_size
-        gail_train_loader = torch.utils.data.DataLoader(
-            dataset=expert_dataset,
-            batch_size=args.gail_batch_size,
-            shuffle=True,
-            drop_last=drop_last)
+    #     expert_dataset = gail.ExpertDataset(
+    #         file_name, num_trajectories=4, subsample_frequency=20)
+    #     drop_last = len(expert_dataset) > args.gail_batch_size
+    #     gail_train_loader = torch.utils.data.DataLoader(
+    #         dataset=expert_dataset,
+    #         batch_size=args.gail_batch_size,
+    #         shuffle=True,
+    #         drop_last=drop_last)
 
     rollouts = RolloutStorage(args.num_steps, args.num_processes,
                               envs.observation_space.shape, envs.action_space,
@@ -95,6 +95,7 @@ def main():
 
     obs = envs.reset()
     rollouts.obs[0].copy_(obs)
+    
     rollouts.to(device)
 
     episode_rewards = deque(maxlen=10)
@@ -165,6 +166,9 @@ def main():
         if (j % args.save_interval == 0
                 or j == num_updates - 1) and args.save_dir != "":
             save_path = os.path.join(args.save_dir, args.algo)
+            #print(os.path.join(save_path, args.env_name))
+            #print(save_path)
+            #print(args.env_name)
             try:
                 os.makedirs(save_path)
             except OSError:
@@ -173,7 +177,7 @@ def main():
             torch.save([
                 actor_critic,
                 getattr(utils.get_vec_normalize(envs), 'obs_rms', None)
-            ], os.path.join(save_path, args.env_name + ".pt"))
+            ], os.path.join(save_path, args.env_name[4:] + ".pt"))
 
         if j % args.log_interval == 0 and len(episode_rewards) > 1:
             total_num_steps = (j + 1) * args.num_processes * args.num_steps
