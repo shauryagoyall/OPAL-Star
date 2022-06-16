@@ -19,6 +19,8 @@ from a2c_ppo_acktr.model import Policy
 from a2c_ppo_acktr.storage import RolloutStorage
 from evaluation import evaluate
 
+import random
+
 
 def main():
     args = get_args()
@@ -114,17 +116,31 @@ def main():
         for step in range(args.num_steps):
             # Sample actions
             with torch.no_grad():
-                value, action, action_log_prob, recurrent_hidden_states = actor_critic.act(
+                value1, action1, action_log_prob1, recurrent_hidden_states = actor_critic.act1(
                     rollouts.obs[step], rollouts.recurrent_hidden_states[step],
                     rollouts.masks[step])
+                
             #####################################################    
                 value2, action2, action_log_prob2, recurrent_hidden_states2 = actor_critic.act2(
                     rollouts.obs[step], rollouts.recurrent_hidden_states[step],
                     rollouts.masks[step])
             ######################################################
             
-            print("action", action)
-            print("action2", action2)
+            #print("action", action)
+            #print("action2", action2)
+            
+            print(action1==action2)
+            
+            flip = random.choice([0, 1]) 
+            if flip ==0:
+                action = action1
+                action_log_prob = action_log_prob1
+                value = value1
+                
+            else:
+                action = action2
+                action_log_prob = action_log_prob2
+                value = value2
 
             # Obser reward and next obs
             obs, reward, done, infos = envs.step(action)
