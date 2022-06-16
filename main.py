@@ -122,6 +122,9 @@ def main():
                     rollouts.obs[step], rollouts.recurrent_hidden_states[step],
                     rollouts.masks[step])
             ######################################################
+            
+            print("action", action)
+            print("action2", action2)
 
             # Obser reward and next obs
             obs, reward, done, infos = envs.step(action)
@@ -144,21 +147,21 @@ def main():
                 rollouts.obs[-1], rollouts.recurrent_hidden_states[-1],
                 rollouts.masks[-1]).detach()
 
-        if args.gail:
-            if j >= 10:
-                envs.venv.eval()
+        # if args.gail:
+        #     if j >= 10:
+        #         envs.venv.eval()
 
-            gail_epoch = args.gail_epoch
-            if j < 10:
-                gail_epoch = 100  # Warm up
-            for _ in range(gail_epoch):
-                discr.update(gail_train_loader, rollouts,
-                             utils.get_vec_normalize(envs)._obfilt)
+        #     gail_epoch = args.gail_epoch
+        #     if j < 10:
+        #         gail_epoch = 100  # Warm up
+        #     for _ in range(gail_epoch):
+        #         discr.update(gail_train_loader, rollouts,
+        #                      utils.get_vec_normalize(envs)._obfilt)
 
-            for step in range(args.num_steps):
-                rollouts.rewards[step] = discr.predict_reward(
-                    rollouts.obs[step], rollouts.actions[step], args.gamma,
-                    rollouts.masks[step])
+        #     for step in range(args.num_steps):
+        #         rollouts.rewards[step] = discr.predict_reward(
+        #             rollouts.obs[step], rollouts.actions[step], args.gamma,
+        #             rollouts.masks[step])
 
         rollouts.compute_returns(next_value, args.use_gae, args.gamma,
                                  args.gae_lambda, args.use_proper_time_limits)
