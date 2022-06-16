@@ -52,15 +52,25 @@ class Policy(nn.Module):
         raise NotImplementedError
 
     def act(self, inputs, rnn_hxs, masks, deterministic=False):
+
         value, actor_features, rnn_hxs = self.base(inputs, rnn_hxs, masks)
         dist = self.dist(actor_features)
 
         if deterministic:
             action = dist.mode()
+            ##################
+            #action2 = dist.mode()
+            ####################
         else:
             action = dist.sample()
+            ####################
+            #action2 = dist.sample()
+            ####################
 
         action_log_probs = dist.log_probs(action)
+        #####################
+        #action_log_probs2 = dist.log_probs(action2)
+        #####################
         dist_entropy = dist.entropy().mean()
 
         return value, action, action_log_probs, rnn_hxs
@@ -69,7 +79,7 @@ class Policy(nn.Module):
         value, _, _ = self.base(inputs, rnn_hxs, masks)
         return value
 
-    def evaluate_actions(self, inputs, rnn_hxs, masks, action):
+    def evaluate_actions(self, inputs, rnn_hxs, masks, action): #add action 2 here
         value, actor_features, rnn_hxs = self.base(inputs, rnn_hxs, masks)
         dist = self.dist(actor_features)
 
