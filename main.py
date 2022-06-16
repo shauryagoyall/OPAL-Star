@@ -117,6 +117,11 @@ def main():
                 value, action, action_log_prob, recurrent_hidden_states = actor_critic.act(
                     rollouts.obs[step], rollouts.recurrent_hidden_states[step],
                     rollouts.masks[step])
+            #####################################################    
+                value2, action2, action_log_prob2, recurrent_hidden_states2 = actor_critic.act2(
+                    rollouts.obs[step], rollouts.recurrent_hidden_states[step],
+                    rollouts.masks[step])
+            ######################################################
 
             # Obser reward and next obs
             obs, reward, done, infos = envs.step(action)
