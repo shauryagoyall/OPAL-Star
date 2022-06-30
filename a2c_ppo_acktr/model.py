@@ -30,6 +30,8 @@ class Policy(nn.Module):
         if action_space.__class__.__name__ == "Discrete":
             num_outputs = action_space.n
             self.dist = Categorical(self.base.output_size, num_outputs)
+            ############################################
+            
         elif action_space.__class__.__name__ == "Box":
             num_outputs = action_space.shape[0]
             self.dist = DiagGaussian(self.base.output_size, num_outputs)
@@ -51,10 +53,11 @@ class Policy(nn.Module):
     def forward(self, inputs, rnn_hxs, masks):
         raise NotImplementedError
 
-    def act(self, inputs, rnn_hxs, masks, deterministic=False):
+    def act1(self, inputs, rnn_hxs, masks, deterministic=False):
 
         value, actor_features, rnn_hxs = self.base(inputs, rnn_hxs, masks)
         dist = self.dist(actor_features)
+        
 
         if deterministic:
             action = dist.mode()
@@ -73,13 +76,16 @@ class Policy(nn.Module):
         #####################
         dist_entropy = dist.entropy().mean()
 
-        return value, action, action_log_probs, rnn_hxs
+        #return value, action, action_log_probs, rnn_hxs, actor_features[0].sort()
+        return value, action, action_log_probs, rnn_hxs, dist.probs
     
     ##############################################################33
     def act2(self, inputs, rnn_hxs, masks, deterministic=False):
 
         value, actor_features, rnn_hxs = self.base(inputs, rnn_hxs, masks)
-        dist = self.dist(actor_features)
+        dist = self.dist(actor_features) #from super passing probs
+        #print(actor_features[0].sort())
+        #print(actor_features[0])
 
         if deterministic:
             action = dist.mode()
@@ -89,7 +95,8 @@ class Policy(nn.Module):
         action_log_probs = dist.log_probs(action)
         dist_entropy = dist.entropy().mean()
 
-        return value, action, action_log_probs, rnn_hxs
+        #return value, action, action_log_probs, rnn_hxs, actor_features[0].sort()
+        return value, action, action_log_probs, rnn_hxs, dist.probs
     #############################################################
     
     def get_value(self, inputs, rnn_hxs, masks):
