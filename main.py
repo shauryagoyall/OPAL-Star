@@ -126,8 +126,9 @@ def main():
                     rollouts.masks[step])
             
             
-            print(probs1==probs2)
-            print(probs1)
+            #print(probs1==probs2)
+            apple = nn.Softmax(dim=1)
+            print("softmax", apple(probs1))
             print(probs1)
             #print(ooga[0])
             # for apple in range(len(ooga)):
