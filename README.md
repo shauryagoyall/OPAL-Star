@@ -2,7 +2,7 @@
 
 ## To run:
 
-    python main.py --env-name "ALE/Breakout-v5" --num-processes 1
+    python main.py --algo "opal" --env-name "ALE/Breakout-v5" --num-processes 1
     
 Changes from main (my reference mainly):
 
