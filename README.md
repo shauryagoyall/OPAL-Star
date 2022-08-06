@@ -32,7 +32,7 @@ pip install stable-baselines3[extra]
 ```
 
 ## Visualization of training:
-use visualize.ipynb file. It uses the .csv file saved in the log directory. For now, you will have to manually remove the 1st line from the .csv file before this code works
+use ```visualize.ipynb``` file. It uses the .csv file saved in the log directory. For now, you will have to manually remove the 1st line from the .csv file before this code works
 
 ## Changes from main (my reference mainly):
 
