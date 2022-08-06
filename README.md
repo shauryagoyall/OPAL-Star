@@ -20,12 +20,6 @@ sb3 package:
 
     #make np_random.randint(1, self.noop_max + 1) to np_random.integers(1, self.noop_max + 1)
 
-## To Edit:
-
-Major: CNNBase from model.py in a2c...   folder \
-Minor: pytorch.save(...       from main.py
-
-
 
 
 ## Incomplete Requirements 
@@ -42,9 +36,7 @@ In order to install requirements, follow:
 from the pytorch website
 
 # Other requirements
-pip install -r requirements.txt
+pip install stable-baselines3[extra]
 
-# Gym Atari
-conda install -c conda-forge gym-atari
 ```
 
