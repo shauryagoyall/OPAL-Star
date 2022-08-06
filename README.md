@@ -28,12 +28,16 @@ sb3 package:
 * [PyTorch](http://pytorch.org/)
 * [Stable baselines3](https://github.com/DLR-RM/stable-baselines3)
 * OpenCV
+* h5py
 
 In order to install requirements, follow:
 
 ```bash
 # PyTorch
 from the pytorch website
+
+# h5py
+conda install h5py
 
 # Other requirements
 pip install stable-baselines3[extra]
