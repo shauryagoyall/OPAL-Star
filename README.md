@@ -15,6 +15,7 @@
 * OpenCV
 * h5py
 * gym
+* pybullet (for physics based and robotics simulations only, not needed here)
 
 In order to install requirements, follow:
 
