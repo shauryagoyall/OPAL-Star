@@ -1,6 +1,6 @@
 # Opal Star
 
-## To run:
+## To run/train:
 
     python main.py --algo "opal" --env-name "Breakout-v0" --num-processes 16
     
