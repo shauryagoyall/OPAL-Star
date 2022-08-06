@@ -6,7 +6,7 @@ import torch
 def get_args():
     parser = argparse.ArgumentParser(description='RL')
     parser.add_argument(
-        '--algo', default='a2c', help='algorithm to use: a2c | ppo | acktr')
+        '--algo', default='a2c', help='algorithm to use: a2c | opal | ppo | acktr')
     parser.add_argument(
         '--gail',
         action='store_true',
@@ -123,8 +123,8 @@ def get_args():
         help='environment to train on (default: PongNoFrameskip-v4)')
     parser.add_argument(
         '--log-dir',
-        default='/tmp/gym/',
-        help='directory to save agent logs (default: /tmp/gym)')
+        default='./logs/',
+        help='directory to save agent logs (default: ./logs/)')
     parser.add_argument(
         '--save-dir',
         default='./trained_models/',
@@ -153,9 +153,9 @@ def get_args():
 
     args.cuda = not args.no_cuda and torch.cuda.is_available()
 
-    assert args.algo in ['a2c', 'ppo', 'acktr']
+    assert args.algo in ['a2c', 'ppo', 'acktr', 'opal']
     if args.recurrent_policy:
-        assert args.algo in ['a2c', 'ppo'], \
+        assert args.algo in ['a2c', 'ppo', 'opal'], \
             'Recurrent policy is not implemented for ACKTR'
 
     return args

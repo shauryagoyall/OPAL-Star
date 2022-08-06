@@ -20,6 +20,7 @@ class FixedCategorical(torch.distributions.Categorical):
         return super().sample().unsqueeze(-1)
 
     def log_probs(self, actions):
+
         return (
             super()
             .log_prob(actions.squeeze(-1))
@@ -69,7 +70,9 @@ class Categorical(nn.Module):
         self.linear = init_(nn.Linear(num_inputs, num_outputs))
 
     def forward(self, x):
+        
         x = self.linear(x)
+        #print(len(self.linear.state_dict()['weight']))
         return FixedCategorical(logits=x)
 
 

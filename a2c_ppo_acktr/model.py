@@ -10,8 +10,7 @@ from a2c_ppo_acktr.utils import init
 class Flatten(nn.Module):
     def forward(self, x):
         return x.view(x.size(0), -1)
-
-
+    
 class Policy(nn.Module):
     def __init__(self, obs_shape, action_space, base=None, base_kwargs=None):
         super(Policy, self).__init__()
@@ -30,8 +29,6 @@ class Policy(nn.Module):
         if action_space.__class__.__name__ == "Discrete":
             num_outputs = action_space.n
             self.dist = Categorical(self.base.output_size, num_outputs)
-            ############################################
-            
         elif action_space.__class__.__name__ == "Box":
             num_outputs = action_space.shape[0]
             self.dist = DiagGaussian(self.base.output_size, num_outputs)
@@ -53,51 +50,101 @@ class Policy(nn.Module):
     def forward(self, inputs, rnn_hxs, masks):
         raise NotImplementedError
 
-    def act1(self, inputs, rnn_hxs, masks, deterministic=False):
+    def act(self, inputs, rnn_hxs, masks, deterministic=False):
 
         value, actor_features, rnn_hxs = self.base(inputs, rnn_hxs, masks)
         dist = self.dist(actor_features)
-        
+        #print(dist.probs)
 
         if deterministic:
             action = dist.mode()
-            ##################
-            #action2 = dist.mode()
-            ####################
         else:
             action = dist.sample()
-            ####################
-            #action2 = dist.sample()
-            ####################
 
         action_log_probs = dist.log_probs(action)
-        #####################
-        #action_log_probs2 = dist.log_probs(action2)
-        #####################
         dist_entropy = dist.entropy().mean()
 
-        #return value, action, action_log_probs, rnn_hxs, actor_features[0].sort()
-        return value, action, action_log_probs, rnn_hxs, dist.probs
+        return value, action, action_log_probs, rnn_hxs
     
-    ##############################################################33
-    def act2(self, inputs, rnn_hxs, masks, deterministic=False):
+    
+    def get_value(self, inputs, rnn_hxs, masks):
+        value, _, _ = self.base(inputs, rnn_hxs, masks)
+        return value
+
+    def evaluate_actions(self, inputs, rnn_hxs, masks, action): 
+        value, actor_features, rnn_hxs = self.base(inputs, rnn_hxs, masks)
+        dist = self.dist(actor_features)
+        #print(dist)
+
+        action_log_probs = dist.log_probs(action)
+        dist_entropy = dist.entropy().mean()
+
+        return value, action_log_probs, dist_entropy, rnn_hxs
+
+class OpalPolicy(nn.Module):
+    def __init__(self, obs_shape, action_space, base=None, base_kwargs=None):
+        super(OpalPolicy, self).__init__()
+        if base_kwargs is None:
+            base_kwargs = {}
+        if base is None:
+            if len(obs_shape) == 3:
+                base = CNNBase
+            elif len(obs_shape) == 1:
+                base = MLPBase
+            else:
+                raise NotImplementedError
+        
+        self.base = base(obs_shape[0], **base_kwargs)
+
+        if action_space.__class__.__name__ == "Discrete":
+            num_outputs = action_space.n
+            self.dist1 = Categorical(self.base.output_size, num_outputs)
+            ############################################
+            self.dist2 = Categorical(self.base.output_size, num_outputs)
+        elif action_space.__class__.__name__ == "Box":
+            num_outputs = action_space.shape[0]
+            self.dist1 = DiagGaussian(self.base.output_size, num_outputs)
+        elif action_space.__class__.__name__ == "MultiBinary":
+            num_outputs = action_space.shape[0]
+            self.dist1 = Bernoulli(self.base.output_size, num_outputs)
+        else:
+            raise NotImplementedError
+
+    @property
+    def is_recurrent(self):
+        return self.base.is_recurrent
+
+    @property
+    def recurrent_hidden_state_size(self):
+        """Size of rnn_hx."""
+        return self.base.recurrent_hidden_state_size
+
+    def forward(self, inputs, rnn_hxs, masks):
+        raise NotImplementedError
+
+    def act(self, inputs, rnn_hxs, masks, deterministic=False):
 
         value, actor_features, rnn_hxs = self.base(inputs, rnn_hxs, masks)
-        dist = self.dist(actor_features) #from super passing probs
-        #print(actor_features[0].sort())
-        #print(actor_features[0])
+        dist1 = self.dist1(actor_features)
+        dist2 = self.dist2(actor_features)
+        dist = torch.distributions.categorical.Categorical(probs=dist1.probs + dist2.probs) #weighing of the actions goes here
+        # print(dist1.probs) 
+        # print(dist2.probs) 
 
         if deterministic:
             action = dist.mode()
         else:
             action = dist.sample()
 
-        action_log_probs = dist.log_probs(action)
-        dist_entropy = dist.entropy().mean()
+        action_log_probs1 = dist1.log_probs(action)
+        action_log_probs2 = dist2.log_probs(action)
+        #print(action_log_probs1==action_log_probs2)
 
-        #return value, action, action_log_probs, rnn_hxs, actor_features[0].sort()
-        return value, action, action_log_probs, rnn_hxs, dist.probs
-    #############################################################
+        dist_entropy1 = dist1.entropy().mean()
+        dist_entropy2 = dist2.entropy().mean()
+
+        #return value, action, action_log_probs1,action_log_probs2, rnn_hxs, dist1.probs, dist2.probs
+        return value, action, action_log_probs1,action_log_probs2, rnn_hxs
     
     def get_value(self, inputs, rnn_hxs, masks):
         value, _, _ = self.base(inputs, rnn_hxs, masks)
@@ -105,14 +152,19 @@ class Policy(nn.Module):
 
     def evaluate_actions(self, inputs, rnn_hxs, masks, action): #add action 2 here
         value, actor_features, rnn_hxs = self.base(inputs, rnn_hxs, masks)
-        dist = self.dist(actor_features)
+        dist1 = self.dist1(actor_features)
+        dist2 = self.dist2(actor_features)
+        #print(dist1) #
+        #print(dist2.probs) 
 
-        action_log_probs = dist.log_probs(action)
-        dist_entropy = dist.entropy().mean()
+        action_log_probs1 = dist1.log_probs(action)
+        dist_entropy1 = dist1.entropy().mean()
+        
+        action_log_probs2 = dist2.log_probs(action)
+        dist_entropy2 = dist2.entropy().mean()
 
-        return value, action_log_probs, dist_entropy, rnn_hxs
-
-
+        return value, action_log_probs1, action_log_probs2, dist_entropy1, dist_entropy2, rnn_hxs
+    
 class NNBase(nn.Module):
     def __init__(self, recurrent, recurrent_input_size, hidden_size):
         super(NNBase, self).__init__()
@@ -242,10 +294,6 @@ class MLPBase(NNBase):
         self.actor = nn.Sequential(
             init_(nn.Linear(num_inputs, hidden_size)), nn.Tanh(),
             init_(nn.Linear(hidden_size, hidden_size)), nn.Tanh())
-        ###############################################
-        self.actor2 = nn.Sequential(
-            init_(nn.Linear(num_inputs, hidden_size)), nn.Tanh(),
-            init_(nn.Linear(hidden_size, hidden_size)), nn.Tanh())
 
         self.critic = nn.Sequential(
             init_(nn.Linear(num_inputs, hidden_size)), nn.Tanh(),
@@ -263,7 +311,5 @@ class MLPBase(NNBase):
 
         hidden_critic = self.critic(x)
         hidden_actor = self.actor(x)
-        ####################################################3
-        hidden_actor2 = self.actor2(x)
 
         return self.critic_linear(hidden_critic), hidden_actor, rnn_hxs
