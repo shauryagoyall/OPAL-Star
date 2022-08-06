@@ -1,8 +1,11 @@
-# A2C
+# Opal Star
 
 ## To run:
 
-    python main.py --algo "opal" --env-name "ALE/Breakout-v5" --num-processes 1
+    python main.py --algo "opal" --env-name "Breakout-v0" --num-processes 16
+    
+    change "opal" to "a2c" to use vanilla a2c algorithm \
+    it would be useful to use the --log-dir argument to set a custom directory for the log file
     
 Changes from main (my reference mainly):
 
