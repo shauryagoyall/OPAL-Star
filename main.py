@@ -44,23 +44,22 @@ def main():
                          args.gamma, args.log_dir, device, False)
     
     
-    if args.algo == 'opal':
+    if args.algo == 'opal': #if chosen algorithm is opal, choose opal policy
         actor_critic = OpalPolicy(
             envs.observation_space.shape,
             envs.action_space,
             base_kwargs={'recurrent': args.recurrent_policy})
         actor_critic.to(device)
         
-    else:
+    else: #choose normal actor critic policy for all other algorithms
         actor_critic = Policy(
             envs.observation_space.shape,
             envs.action_space,
             base_kwargs={'recurrent': args.recurrent_policy})
         actor_critic.to(device)
-        
+         
+    # create agent with respective algorithm
     
-    #print(args.algo)
-
     if args.algo == 'a2c':
         agent = algo.A2C_ACKTR(
             actor_critic,
@@ -71,7 +70,7 @@ def main():
             alpha=args.alpha,
             max_grad_norm=args.max_grad_norm)
     
-    elif args.algo == 'opal':
+    elif args.algo == 'opal': 
         agent = algo.OPAL(
             actor_critic,
             args.value_loss_coef,
@@ -136,7 +135,7 @@ def main():
                 agent.optimizer, j, num_updates,
                 agent.optimizer.lr if args.algo == "acktr" else args.lr)
             
-        if args.algo == 'opal':
+        if args.algo == 'opal': # as opal has act, act_other and returns more terms compared to other algorithms, a separate set of code for opal
 
             for step in range(args.num_steps):
                 # Sample actions
@@ -150,42 +149,12 @@ def main():
                     value, action, action_log_prob1, action_log_prob2, recurrent_hidden_states = actor_critic.act_other(
                         rollouts.obs[step], rollouts.recurrent_hidden_states[step],
                         rollouts.masks[step], action)
-                    #print(action.is_cuda)
-                    
-                
-                
-                #print(value1)
-                #apple = nn.Softmax(dim=1)
-                #print("probs1", probs1)
-                #print("probs2", probs2)
-                #print(ooga[0])
-                # for apple in range(len(ooga)):
-                #     if ooga[0][apple]==booga[0][apple]:
-                #         continue
-                #     else:
-                #         print("haha code broken")
-                #         break
-                    
-                
-                # flip = random.choice([0, 1]) 
-                # if flip ==0:
-                #     action = action1
-                #     action_log_prob = action_log_prob1
-                #     value = value1
-                    
-                # else:
-                #     action = action2
-                #     action_log_prob = action_log_prob2
-                #     value = value2
-                ######################################################
-    
-                # Obser reward and next obs
+
+                # Observe reward and next obsservation
                 obs, reward, done, infos = envs.step(action)
                 #print(infos)
                 for info in infos:
-                    #print(info['episode'])
                     if 'episode' in info.keys():
-                        #print(info['episode'])
                         episode_rewards.append(info['episode']['r'])
     
                 # If done then clean the history of observations.
@@ -194,8 +163,8 @@ def main():
                 bad_masks = torch.FloatTensor(
                     [[0.0] if 'bad_transition' in info.keys() else [1.0]
                      for info in infos])
-                rollouts.opal_insert(obs, recurrent_hidden_states, action,
-                                action_log_prob1, action_log_prob2, value, reward, masks, bad_masks)
+                rollouts.opal_insert(obs, recurrent_hidden_states, action, 
+                                action_log_prob1, action_log_prob2, value, reward, masks, bad_masks) #calls opal insert here instead of insert
     
             with torch.no_grad():
                 next_value = actor_critic.get_value(
