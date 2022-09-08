@@ -65,6 +65,9 @@ class RolloutStorage(object):
         self.obs[self.step + 1].copy_(obs)
         self.recurrent_hidden_states[self.step +
                                      1].copy_(recurrent_hidden_states)
+        # print("actions", actions)
+        # print("storage",self.actions[self.step])
+        # print("storage old",self.actions)
         self.actions[self.step].copy_(actions)
         self.action_log_probs[self.step].copy_(action_log_probs)
         ###############################
@@ -84,6 +87,9 @@ class RolloutStorage(object):
         self.obs[self.step + 1].copy_(obs)
         self.recurrent_hidden_states[self.step +
                                      1].copy_(recurrent_hidden_states)
+        # print("actions", actions)
+        # print("storage",self.actions[self.step])
+        # print("storage old",self.actions)
         self.actions[self.step].copy_(actions)
         self.action_log_probs[self.step].copy_(action_log_probs)
         self.value_preds[self.step].copy_(value_preds)

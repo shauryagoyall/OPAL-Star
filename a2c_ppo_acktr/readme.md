@@ -1,5 +1,3 @@
-# List of modifications for opal by file name
-
 ## model.py 
 
 has a whole code block for opal policy. this is the clone of the policy object with some minor modifications.

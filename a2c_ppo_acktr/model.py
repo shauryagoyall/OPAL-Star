@@ -60,6 +60,9 @@ class Policy(nn.Module):
             action = dist.mode()
         else:
             action = dist.sample()
+        
+        #print(action)
+            
 
         action_log_probs = dist.log_probs(action)
         dist_entropy = dist.entropy().mean()
@@ -122,6 +125,34 @@ class OpalPolicy(nn.Module):
     def forward(self, inputs, rnn_hxs, masks):
         raise NotImplementedError
 
+    # def act(self, inputs, rnn_hxs, masks, deterministic=False):
+
+    #     value, actor_features, rnn_hxs = self.base(inputs, rnn_hxs, masks)
+    #     dist1 = self.dist1(actor_features)
+    #     dist2 = self.dist2(actor_features)
+    #     dist = torch.distributions.categorical.Categorical(probs=dist1.probs + dist2.probs) #weighing of the actions goes here
+    #     # print(dist1.probs) 
+    #     # print(dist2.probs) 
+
+    #     if deterministic:
+    #         action = dist.mode()
+    #     else:
+    #         action = dist.sample()
+    #     action = torch.tensor([[action[x]] for x in range(len(action))])
+    #     print(action)
+
+    #     action_log_probs1 = dist1.log_probs(action)
+    #     action_log_probs2 = dist2.log_probs(action)
+        
+    #     #print(type(action))
+    #     #print(action_log_probs1==action_log_probs2)
+
+    #     dist_entropy1 = dist1.entropy().mean()
+    #     dist_entropy2 = dist2.entropy().mean()
+
+    #     #return value, action, action_log_probs1,action_log_probs2, rnn_hxs, dist1.probs, dist2.probs
+    #     return value, action, action_log_probs1,action_log_probs2, rnn_hxs
+    
     def act(self, inputs, rnn_hxs, masks, deterministic=False):
 
         value, actor_features, rnn_hxs = self.base(inputs, rnn_hxs, masks)
@@ -135,9 +166,28 @@ class OpalPolicy(nn.Module):
             action = dist.mode()
         else:
             action = dist.sample()
+        action = torch.tensor([[action[x]] for x in range(len(action))])
+        #print(action)
+
+        #return value, action, action_log_probs1,action_log_probs2, rnn_hxs, dist1.probs, dist2.probs
+        return action
+    
+    def act_other(self, inputs, rnn_hxs, masks, action):
+
+        value, actor_features, rnn_hxs = self.base(inputs, rnn_hxs, masks)
+        dist1 = self.dist1(actor_features)
+        dist2 = self.dist2(actor_features)
+        #dist = torch.distributions.categorical.Categorical(probs=dist1.probs + dist2.probs) #weighing of the actions goes here
+        # print(dist1.probs) 
+        # print(dist2.probs) 
+
+        #action = torch.tensor([[action[x]] for x in range(len(action))])
+        #print(action)
 
         action_log_probs1 = dist1.log_probs(action)
         action_log_probs2 = dist2.log_probs(action)
+        
+        #print(type(action))
         #print(action_log_probs1==action_log_probs2)
 
         dist_entropy1 = dist1.entropy().mean()
@@ -145,6 +195,8 @@ class OpalPolicy(nn.Module):
 
         #return value, action, action_log_probs1,action_log_probs2, rnn_hxs, dist1.probs, dist2.probs
         return value, action, action_log_probs1,action_log_probs2, rnn_hxs
+    
+
     
     def get_value(self, inputs, rnn_hxs, masks):
         value, _, _ = self.base(inputs, rnn_hxs, masks)
